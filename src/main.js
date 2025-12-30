@@ -190,6 +190,27 @@ async function fetchTasks() {
   console.log('タスク:', tasks)
   renderTaskList()
 }
+// ========================================
+// 更新ボタン処理
+// ========================================
+async function handleRefresh() {
+  const btn = document.getElementById('refresh-btn')
+  const originalText = btn.innerHTML
+
+  btn.innerHTML = '🔄 更新中...'
+  btn.disabled = true
+
+  await fetchProjects()
+  renderProjectTabs()
+  await fetchTasks()
+
+  btn.innerHTML = '✅ 更新完了！'
+
+  setTimeout(() => {
+    btn.innerHTML = originalText
+    btn.disabled = false
+  }, 1000)
+}
 
 // ========================================
 // メイン画面表示
@@ -579,6 +600,9 @@ function setupEventListeners() {
   document.getElementById('report-edit-modal').addEventListener('click', (e) => {
     if (e.target.id === 'report-edit-modal') closeReportEditModal()
   })
+
+  // 更新ボタン
+  document.getElementById('refresh-btn').addEventListener('click', handleRefresh)
 
   // アーカイブボタン
   document.getElementById('archive-btn').addEventListener('click', openArchiveModal)
@@ -2229,14 +2253,10 @@ async function restoreProject(projectId) {
 // PWA判定・設定
 // ========================================
 function checkPWAMode() {
-  // display-mode: standalone または iOS PWA判定
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
   const isIOSPWA = window.navigator.standalone === true
-
-  // 🆕 タッチデバイス判定を追加
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
-  // PWAモード = (standalone または iOS PWA) かつ タッチデバイス
   isPWA = (isStandalone || isIOSPWA) && isTouchDevice
 
   if (isPWA) {
@@ -2251,6 +2271,12 @@ function checkPWAMode() {
     } else {
       console.log('🌐 Webモードで動作中')
     }
+  }
+
+  // 🆕 PWAインジケーター表示（standaloneならPC/スマホ問わず表示）
+  const pwaIndicator = document.getElementById('pwa-indicator')
+  if (pwaIndicator && (isStandalone || isIOSPWA)) {
+    pwaIndicator.classList.remove('hidden')
   }
 }
 
@@ -2284,6 +2310,22 @@ function setupPWAListeners() {
     isOnline = false
     document.getElementById('offline-indicator').classList.remove('hidden')
     console.log('❌ オフラインになりました')
+
+    // 🆕 PWAモード時はalertも表示
+    if (isPWA) {
+      alert('オフラインモードです📡')
+    }
+  })
+
+  window.addEventListener('online', () => {
+    isOnline = true
+    document.getElementById('offline-indicator').classList.add('hidden')
+    console.log('✅ オンラインに復帰')
+
+    // 🆕 PWAモード時はalertも表示
+    if (isPWA) {
+      alert('オンラインに復帰しました！✅')
+    }
   })
 
   // 初期状態

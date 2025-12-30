@@ -1,0 +1,33 @@
+{
+  "name": "Stay Focus - タスク管理アプリ",
+  "short_name": "Stay Focus",
+  "description": "集中力を高めるプロジェクト・タスク管理アプリ",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#ff69b4",
+  "background_color": "#ffffff",
+  "orientation": "any",
+  "lang": "ja",
+  "categories": ["productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

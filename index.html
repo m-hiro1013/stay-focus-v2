@@ -4,6 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PWA対応 -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ff69b4">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
   <title>stay-focus 🔥</title>
   <style>
     /* =========================================
@@ -1274,6 +1280,28 @@
       font-size: var(--font-size-small);
       flex-shrink: 0;
     }
+
+    /* =========================================
+   更新ボタン
+   ========================================= */
+    .refresh-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .refresh-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+    }
+
+    .refresh-icon {
+      margin-right: 8px;
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -1291,7 +1319,10 @@
       <div class="app-wrapper">
         <!-- ヘッダー -->
         <header class="app-header">
-          <h1 class="app-title">stay-focus 🔥</h1>
+          <h1 class="app-title">
+            stay-focus 🔥
+            <span id="pwa-indicator" class="pwa-indicator hidden">for PWA</span>
+          </h1>
           <div class="header-buttons">
             <button class="btn hidden" id="project-settings-btn">⚙️ プロジェクト設定</button>
             <button class="btn" id="archive-btn">📦 アーカイブ</button>
@@ -1331,6 +1362,13 @@
 
           <!-- タスク一覧 -->
           <div id="task-list"></div>
+          <!-- 🆕 更新ボタン -->
+          <div class="refresh-section">
+            <button id="refresh-btn" class="btn btn-primary refresh-btn">
+              <span class="refresh-icon">🔄</span>
+              最新の状態に更新
+            </button>
+          </div>
         </main>
       </div>
     </div>
