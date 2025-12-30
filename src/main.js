@@ -87,12 +87,14 @@ async function init() {
     session = newSession
   })
 
-  // PWA判定
+  // 🔧 修正：先にrenderAppでDOMを生成
+  renderApp()
+  renderProjectTabs()
+
+  // 🔧 修正：DOM生成後にPWA判定
   checkPWAMode()
   setupPWAListeners()
 
-  renderApp()
-  renderProjectTabs()
   await fetchTasks()
   setupEventListeners()
   setupUndoListener()
@@ -368,11 +370,7 @@ function renderTaskCard(task) {
             </div>
           </div>
         ` : ''}
-        <div class="${cardClasses.join(' ')} swipe-card ${swipeClass}" draggable="true">
-          <span class="icon-drag">☰</span>
-          <span class="icon-pin ${task.is_pinned ? 'active' : 'inactive'}" data-action="toggle-pin" title="${task.is_pinned ? 'ピン留め解除' : 'ピン留め'}">📌</span>
-          <span class="icon-star ${task.is_important ? 'active' : 'inactive'}" data-action="toggle-important" title="${task.is_important ? '重要マーク解除' : '重要マーク'}">${task.is_important ? '⭐' : '☆'}</span>
-          <input type="checkbox" class="task-checkbox" data-action="toggle-complete" ${task.is_completed ? 'checked' : ''}>
+        <div class="${cardClasses.join(' ')} swipe-card ${swipeClass}" data-task-id="${task.id}" draggable="false">
           <div class="task-card-content" data-action="open-detail">
             <div class="task-name">
               ${projectColorDot}
@@ -383,7 +381,6 @@ function renderTaskCard(task) {
             ${memoHtml}
             ${metaHtml}
           </div>
-          <button class="icon-delete" data-action="delete">削除</button>
         </div>
       </div>
     `
@@ -2273,7 +2270,6 @@ function checkPWAMode() {
     }
   }
 
-  // 🆕 PWAインジケーター表示（standaloneならPC/スマホ問わず表示）
   const pwaIndicator = document.getElementById('pwa-indicator')
   if (pwaIndicator && (isStandalone || isIOSPWA)) {
     pwaIndicator.classList.remove('hidden')

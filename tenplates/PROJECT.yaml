@@ -1,0 +1,278 @@
+# =====================================
+# 📋 PROJECT.yaml
+# =====================================
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⚠️ このコメント部分は編集禁止 ⚠️
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 【このファイルの役割】
+# プロジェクト固有の情報を定義する
+# 技術スタック、環境情報、ビジネスロジック等
+#
+# 【固定/カスタマイズ】
+# カスタマイズ（プロジェクトごとに作成）
+#
+# 【更新タイミング】
+# 要件定義後はほぼ固定
+# 以下の場合のみ更新：
+# - 技術スタックが変わったとき
+# - 環境情報（URL等）が変わったとき
+# - ビジネスロジックの根本が変わったとき
+#
+# 【書くこと】
+# - プロジェクト名・概要・目的
+# - ターゲットユーザー
+# - 技術スタック（言語、FW、DB、デプロイ先）
+# - 環境情報（リポジトリURL、本番URL、APIキー等）
+# - データ構造の概要
+# - ビジネスロジック（計算式等）
+# - 外部連携仕様（API、CSV形式等）
+# - 認証方針
+# - 画面構成
+# - プロジェクト固有の制約
+#
+# 【書かないこと】
+# - AIの振る舞い → SYSTEM.yaml
+# - 運用ルール → RULES.yaml
+# - 進捗状況・決定事項 → WORKFLOW.yaml
+# - ファイル一覧・依存関係 → FILE_STRUCTURE.md
+# - テーブルのカラム定義 → DATABASE.md
+#
+# 【セルフチェック（ファイル編集時に必ず確認）】
+# □ このコメント部分を変更していないか
+# □ 書くことに該当する内容のみ追加/編集したか
+# □ 書かないことに該当する内容を書いていないか
+# □ 既存の構造（キー名、階層）を変更していないか
+# □ 削除・置換をしていないか（追記・編集のみ可）
+#
+# =====================================
+
+project:
+  version: "1.0"
+  last_updated: "2025-12-30"
+
+# =====================================
+# 1. 基本情報
+# =====================================
+basic:
+  name: "stay-focus-v2"
+  description: "時間枠管理・プロジェクト管理・チーム機能を備えたタスク管理アプリ"
+  purpose: "タスクを時間枠（今日/明日/今週/来週/来月以降）で整理し、集中力を維持しながらプロジェクトを進める"
+  created_at: "2025-12-30"
+
+# =====================================
+# 2. ユーザー情報
+# =====================================
+user:
+  developer:
+    name: "ひろ"
+  target_users:
+    description: "個人またはチームでタスク管理をしたい人"
+    details:
+      - role: "個人ユーザー"
+        count: "1人〜"
+        usage: "自分のタスクを時間枠で整理"
+      - role: "チームメンバー"
+        count: "複数人"
+        usage: "チームでタスクを共有・担当者割り当て"
+
+# =====================================
+# 3. 技術スタック
+# =====================================
+tech_stack:
+  frontend:
+    language: "JavaScript（TypeScriptなし）"
+    framework: "Vanilla JS（フレームワークなし）"
+    css: "HTMLファイル内styleタグ"
+    build_tool: "Vite"
+  backend:
+    type: "Supabase"
+    database: "PostgreSQL"
+    auth: "Supabase Auth（メール/パスワード）"
+  deploy:
+    hosting: "Vercel"
+    auto_deploy: true  # GitHub main branch連携
+  version_control:
+    type: "Git + GitHub"
+    branch: "main"
+
+# =====================================
+# 4. 環境情報
+# =====================================
+environment:
+  local:
+    project_path: "~/Desktop/stay-focus-v2"
+    dev_command: "npm run dev"
+    dev_url: "http://localhost:5173/"
+  github:
+    owner: "m-hiro1013"
+    repo: "stay-focus-v2"
+    url: "https://github.com/m-hiro1013/stay-focus-v2"
+  production:
+    url: "https://stay-focus-v2.vercel.app/"
+  backend_service:
+    supabase:
+      project_url: "https://pfkffcibxbquqjhorhxg.supabase.co"
+      note: "既存のstay-focus-appと同じプロジェクトを使用"
+  env_vars:
+    description: ".envに設定する環境変数"
+    variables:
+      - name: "VITE_SUPABASE_URL"
+        description: "Supabase URL"
+      - name: "VITE_SUPABASE_ANON_KEY"
+        description: "Supabase Anon Key"
+
+# =====================================
+# 5. データ構造
+# =====================================
+data_structure:
+  description: "チームベースのマルチテナント構造"
+  hierarchy:
+    - level: 1
+      name: "teams"
+      description: "ワークスペース（サインアップ時自動作成）"
+    - level: 2
+      name: "team_members"
+      description: "チーム↔ユーザー紐付け"
+    - level: 2
+      name: "projects"
+      description: "タスクのグループ化（色・完了・アーカイブ）"
+    - level: 2
+      name: "members"
+      description: "担当者（名前・メール・カラー）"
+    - level: 2
+      name: "settings"
+      description: "チーム設定（key-value形式、複合PK）"
+    - level: 3
+      name: "tasks"
+      description: "タスク本体（時間枠・期日・担当者・ピン・重要等）"
+  note: "詳細なテーブル定義はDATABASE.mdを参照"
+
+# =====================================
+# 6. ビジネスロジック
+# =====================================
+business_logic:
+  time_frames:
+    description: "タスクの優先度を時間枠で管理"
+    values:
+      - name: "今日"
+        min_days: 0
+      - name: "明日"
+        min_days: 1
+      - name: "今週"
+        min_days: 3
+      - name: "来週"
+        min_days: 5
+      - name: "来月以降"
+        min_days: 10
+  
+  task_sorting:
+    description: "sort_orderの昇順のみ（ピン・重要は並び順に影響しない）"
+  
+  overdue_detection:
+    description: "期日切れ・時間枠不一致の検出"
+    rules:
+      - name: "期日切れ"
+        condition: "期日 < 今日"
+        display: "赤背景 + 警告アイコン"
+      - name: "時間枠不一致"
+        condition: "期日 < 時間枠の最小日数"
+        display: "赤背景 + 警告アイコン"
+  
+  due_time_input:
+    step: "30分刻み（00分/30分のみ）"
+    default: "17:00（初回フォーカス時に自動設定）"
+    clear: "クリア機能あり"
+  
+  display_rules:
+    pinned:
+      description: "ピン留め表示"
+      style: "赤枠線(2px solid #ff4d4d) + bold + 📌アイコン"
+    important:
+      description: "重要マーク表示"
+      style: "薄黄色背景(#fffde7) + ⭐アイコン"
+    both:
+      description: "両方ON"
+      style: "赤枠線 + 薄黄色背景 + bold + 両アイコン"
+    project_color:
+      description: "プロジェクトカラー"
+      style: "タスク名の前にカラー丸(12px)で表示"
+
+# =====================================
+# 7. 外部連携
+# =====================================
+external_integrations:
+  none: true
+  future:
+    - "Googleカレンダー連携（event_idカラムは用意済み）"
+
+# =====================================
+# 8. 認証方針
+# =====================================
+authentication:
+  enabled: true
+  provider: "Supabase Auth（メール/パスワード）"
+  methods:
+    - "email/password"
+  auto_team_creation:
+    trigger: "on_auth_user_created"
+    process:
+      - "teamsテーブルにレコード作成"
+      - "team_membersにowner roleで追加"
+  authorization:
+    type: "RLS"
+    description: "チームベースのアクセス制御（20ポリシー設定済み）"
+
+# =====================================
+# 9. 画面構成
+# =====================================
+pages:
+  - path: "auth.html"
+    name: "認証ページ"
+    purpose: "ログイン/サインアップ"
+    js: "src/auth.js"
+  - path: "index.html"
+    name: "メイン画面"
+    purpose: "タスク一覧・全モーダル（作成/編集/プロジェクト/メンバー/レポート/アーカイブ）"
+    js: "src/main.js"
+
+# =====================================
+# 10. PWA設定
+# =====================================
+pwa:
+  detection:
+    description: "display-mode: standalone + タッチデバイス判定"
+    class: ".pwa-mode"
+  swipe_actions:
+    right: "タスク完了"
+    left: "タスク削除"
+    note: "タッチデバイスPWAのみ有効"
+  offline:
+    detection: "navigator.onLine"
+    display: "バナー + alert（PWAモード時）"
+  manifest: "public/manifest.json"
+  icons:
+    - "public/icons/icon-192.png"
+    - "public/icons/icon-512.png"
+    - "public/icons/icon-512-maskable.png"
+  service_worker:
+    file: "public/sw.js"
+    status: "未実装（低優先度）"
+
+# =====================================
+# 11. 制約・ルール
+# =====================================
+constraints:
+  - name: "TypeScript不使用"
+    description: "JavaScriptのみで実装"
+    reason: "シンプルさ優先、学習コスト削減"
+  - name: "フレームワーク不使用"
+    description: "Vanilla JSで実装（React/Vue等不使用）"
+    reason: "シンプルさ優先"
+  - name: "状態管理ライブラリ不使用"
+    description: "Redux等は使わない"
+    reason: "オーバーエンジニアリング回避"
+  - name: "時間枠5種類固定"
+    description: "今日/明日/今週/来週/来月以降"
+    reason: "既存仕様を維持、シンプルさ優先"

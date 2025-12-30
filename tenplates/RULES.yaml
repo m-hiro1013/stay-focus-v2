@@ -1,0 +1,709 @@
+# =====================================
+# 📏 RULES.yaml
+# =====================================
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⚠️ このコメント部分は編集禁止 ⚠️
+# ⚠️ このファイル全体が編集禁止 ⚠️
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 【このファイルの役割】
+# プロンプト群の運用ルールを定義する
+# 何をどこに書くか、いつ更新するか、どう管理するか
+#
+# 【固定/カスタマイズ】
+# 完全固定（全プロジェクト共通・変更不可）
+#
+# 【更新タイミング】
+# 変更しない
+#
+# 【書くこと】
+# - ファイル構成と役割
+# - ファイル読み込み順序
+# - 役割分担（何をどこに書くか）
+# - 更新タイミング
+# - WORKFLOW運用ルール（features、session_logの書き方）
+# - tips運用ルール（汎用/固有の判断、追加フロー）
+# - プロンプト更新ルール（追記・編集のみ可、削除禁止）
+# - セーブ出力形式
+#
+# 【書かないこと】
+# - AIの振る舞い → SYSTEM.yaml
+# - 開発プロセス → SYSTEM.yaml
+# - プロジェクト固有の情報 → PROJECT.yaml
+# - 進捗状況 → WORKFLOW.yaml
+# - ファイル構成 → FILE_STRUCTURE.md
+# - DB設計 → DATABASE.md
+#
+# 【セルフチェック（ファイル編集時に必ず確認）】
+# □ このファイルは編集禁止であることを理解しているか
+# □ 編集が必要な場合は、ルール自体の見直しが必要（別途検討）
+#
+# =====================================
+
+rules:
+  version: "1.0"
+  last_updated: "2025-12-30"
+
+  # =====================================
+  # 1. ファイル構成
+  # =====================================
+  file_structure:
+    description: "6ファイル + tipsフォルダで構成"
+    
+    files:
+      - name: "SYSTEM.yaml"
+        role: "AIの性質・能力（ペルソナ、開発プロセス、禁止事項、原則等）"
+        fixed: "ほぼ固定（汎用tipsのみ追加可能）"
+        update_timing: "基本変更しない。汎用tipsは随時追加"
+      
+      - name: "RULES.yaml"
+        role: "プロンプト群の運用ルール（このファイル）"
+        fixed: "完全固定"
+        update_timing: "変更しない"
+      
+      - name: "PROJECT.yaml"
+        role: "プロジェクト固有情報（技術スタック、環境、ビジネスロジック）"
+        fixed: "カスタマイズ"
+        update_timing: "要件定義後はほぼ固定"
+      
+      - name: "WORKFLOW.yaml"
+        role: "進捗管理（features + session_log）"
+        fixed: "カスタマイズ"
+        update_timing: "毎セッション更新"
+      
+      - name: "FILE_STRUCTURE.md"
+        role: "ファイル構成・依存関係"
+        fixed: "カスタマイズ"
+        update_timing: "ファイル変更時に即更新"
+      
+      - name: "DATABASE.md"
+        role: "DB設計の正（テーブル・カラム・リレーション）"
+        fixed: "カスタマイズ"
+        update_timing: "DB変更時"
+    
+    tips_folder:
+      path: "tips/"
+      role: "環境別のtips・ノウハウを蓄積"
+      files:
+        - "TIPS_SUPABASE.md"
+        - "TIPS_GAS.md"
+        - "TIPS_FIREBASE.md"
+        - "TIPS_VERCEL.md"
+        - "TIPS_VITE.md"
+      update_timing: "開発で得た知見を随時追加"
+    
+    loading_order:
+      description: "セッション開始時の読み込み順序"
+      order:
+        - rank: 1
+          file: "SYSTEM.yaml"
+          purpose: "AIの振る舞いを設定"
+        - rank: 2
+          file: "RULES.yaml"
+          purpose: "運用ルールを把握"
+        - rank: 3
+          file: "PROJECT.yaml"
+          purpose: "プロジェクト固有情報を把握"
+        - rank: 4
+          file: "WORKFLOW.yaml"
+          purpose: "現在の進捗を把握"
+        - rank: 5
+          file: "FILE_STRUCTURE.md"
+          purpose: "ファイル構成を把握"
+        - rank: 6
+          file: "DATABASE.md"
+          purpose: "DB設計を把握"
+        - rank: 7
+          file: "tips/TIPS_XXX.md"
+          purpose: "使用環境のtipsを把握"
+
+  # =====================================
+  # 2. 役割分担（何をどこに書くか）
+  # =====================================
+  responsibility:
+    
+    SYSTEM_yaml:
+      write:
+        - "ペルソナ（名前、口調、性格）"
+        - "質問方法（一問一答、選択肢提示）"
+        - "開発プロセス（新規/既存の判断、ヒアリング項目）"
+        - "セッション手順（現状把握、ファイル取得、終了処理）"
+        - "セッション種別フロー（要件定義/実装/バグ修正/リファクタリング）"
+        - "コーディングスタイル（命名規則、出力形式）"
+        - "禁止事項"
+        - "開発原則（KISS、YAGNI、DRY等）"
+        - "汎用tips（環境に依存しない共通知見）"
+        - "懸念共有の方法"
+      not_write:
+        - "プロジェクト固有の情報"
+        - "進捗状況"
+        - "ファイル構成"
+        - "DB設計"
+    
+    RULES_yaml:
+      write:
+        - "ファイル構成と役割"
+        - "読み込み順序"
+        - "役割分担（何をどこに書くか）"
+        - "更新タイミング"
+        - "WORKFLOW運用ルール"
+        - "tips運用ルール"
+        - "プロンプト更新ルール"
+        - "セーブ出力形式"
+      not_write:
+        - "AIの振る舞い"
+        - "開発プロセス"
+        - "プロジェクト固有の情報"
+    
+    PROJECT_yaml:
+      write:
+        - "プロジェクト名・概要・目的"
+        - "ターゲットユーザー"
+        - "技術スタック（言語、FW、DB、デプロイ先）"
+        - "環境情報（リポジトリURL、本番URL、APIキー等）"
+        - "データ構造の概要"
+        - "ビジネスロジック（計算式等）"
+        - "外部連携仕様（API、CSV形式等）"
+        - "認証方針"
+      not_write:
+        - "AIの振る舞い"
+        - "進捗状況"
+        - "ファイル一覧"
+        - "テーブルのカラム定義"
+    
+    WORKFLOW_yaml:
+      write:
+        - "機能一覧と進捗（features）"
+        - "セッションログ（session_log）"
+        - "決定事項"
+        - "注意点・ハマったこと"
+        - "次のタスク"
+      not_write:
+        - "AIの振る舞い"
+        - "技術スタック"
+        - "環境情報"
+        - "ファイル構成"
+        - "DB設計"
+    
+    FILE_STRUCTURE_md:
+      write:
+        - "ディレクトリ構成"
+        - "各ファイルの役割"
+        - "ファイル間の依存関係"
+      not_write:
+        - "進捗状況"
+        - "コードの中身"
+    
+    DATABASE_md:
+      write:
+        - "テーブル一覧"
+        - "カラム定義（型、制約）"
+        - "外部キー・リレーション"
+        - "RLSポリシー"
+        - "Functions / Triggers"
+        - "DB変更履歴"
+      not_write:
+        - "進捗状況"
+        - "決定事項"
+        - "ファイル構成"
+    
+    tips_folder:
+      write:
+        - "環境固有のtips（Supabase、GAS、Firebase等）"
+        - "よくあるハマりポイントと解決策"
+        - "ベストプラクティス"
+      not_write:
+        - "プロジェクト固有の注意点（→ WORKFLOW.yamlのcautionsへ）"
+
+  # =====================================
+  # 3. 更新タイミング
+  # =====================================
+  update_timing:
+    
+    SYSTEM_yaml:
+      timing: "基本変更しない"
+      exception: "汎用tipsセクションのみ追加可能"
+      trigger: "環境に依存しない共通の知見を得たとき"
+    
+    RULES_yaml:
+      timing: "変更しない"
+      exception: "なし"
+    
+    PROJECT_yaml:
+      timing: "要件定義後はほぼ固定"
+      triggers:
+        - "技術スタックが変わったとき"
+        - "環境情報（URL等）が変わったとき"
+        - "ビジネスロジックの根本が変わったとき"
+    
+    WORKFLOW_yaml:
+      timing: "毎セッション更新"
+      triggers:
+        - "セッション終了時（session_log追記）"
+        - "機能の実装が完了したとき（features更新）"
+        - "新しい機能を追加することが決まったとき（features追加）"
+        - "決定事項が出たとき（session_log内decisions）"
+        - "注意点を発見したとき（session_log内cautions）"
+    
+    FILE_STRUCTURE_md:
+      timing: "ファイル変更時に即更新"
+      triggers:
+        - "新しいファイルを作成したとき"
+        - "ファイルを削除したとき"
+        - "ファイル名を変更したとき"
+        - "ディレクトリ構成を変更したとき"
+      important: "変更したら即座に更新。後回しにしない"
+    
+    DATABASE_md:
+      timing: "DB変更時"
+      triggers:
+        - "テーブルを作成したとき"
+        - "カラムを追加・変更・削除したとき"
+        - "外部キーを追加・変更したとき"
+        - "RLSポリシーを変更したとき"
+        - "Functions / Triggersを変更したとき"
+    
+    tips:
+      timing: "開発で知見を得たとき"
+      triggers:
+        - "バグ修正完了時に「これ他でも使える」と判断したとき"
+        - "新しいハマりポイントを発見したとき"
+        - "ベストプラクティスを見つけたとき"
+
+  # =====================================
+  # 4. WORKFLOW運用ルール
+  # =====================================
+  workflow_operation:
+    
+    # ----- features（機能一覧） -----
+    features:
+      description: "機能の一覧と進捗を管理"
+      format: |
+        features:
+          F001:
+            name: "機能名"
+            status: "not_started"  # not_started / in_progress / done / on_hold
+            page: "index.html"     # 関連ページ（任意）
+            note: "補足情報"        # 任意
+      
+      status_values:
+        - value: "not_started"
+          meaning: "未着手"
+        - value: "in_progress"
+          meaning: "実装中"
+        - value: "done"
+          meaning: "完了"
+        - value: "on_hold"
+          meaning: "保留"
+      
+      update_rules:
+        - "新機能が決まったら追加"
+        - "実装開始時に in_progress に変更"
+        - "実装完了時に done に変更"
+        - "保留になったら on_hold に変更"
+    
+    # ----- session_log（セッションログ） -----
+    session_log:
+      description: "セッションごとの作業記録を時系列で追記"
+      format: |
+        session_log:
+          - date: "2025-12-30"
+            work_type: "requirements"  # requirements / implementation / bugfix / refactoring
+            summary: "今日やったことの要約"
+            
+            details:
+              what: "具体的に何をしたか"
+              why: "なぜそうしたか（背景・目的）"
+              how: "どう実装したか（方針）"
+            
+            decisions:
+              - id: "D001"
+                content: "〇〇に決定"
+                reason: "理由"
+                alternatives: "検討した他の案"
+            
+            cautions:
+              - id: "C001"
+                issue: "問題の内容"
+                solution: "解決方法"
+                is_universal: false  # true=汎用tips行き, false=このプロジェクト固有
+            
+            features_updated:
+              - id: "F001"
+                change: "done"
+            
+            files_changed:
+              - "src/main.js"
+              - "index.html"
+            
+            next_tasks:
+              - "次にやること1"
+              - "次にやること2"
+            
+            acceptance_criteria:  # 要件定義セッションの場合
+              - "〇〇できる"
+              - "〇〇が表示される"
+      
+      work_type_values:
+        - value: "requirements"
+          meaning: "要件定義セッション"
+        - value: "implementation"
+          meaning: "実装セッション"
+        - value: "bugfix"
+          meaning: "バグ修正セッション"
+        - value: "refactoring"
+          meaning: "リファクタリングセッション"
+      
+      update_rules:
+        - "セッション終了時に必ず追記"
+        - "既存のログは絶対に変更・削除しない"
+        - "追記のみ"
+
+  # =====================================
+  # 5. tips運用ルール
+  # =====================================
+  tips_operation:
+    
+    judgment:
+      description: "汎用か固有かの判断基準"
+      universal:
+        criteria:
+          - "他のプロジェクトでも使える"
+          - "環境・技術に依存する（Supabase、GAS等）"
+          - "プロジェクトの仕様に依存しない"
+        destination: "tips/TIPS_XXX.md または SYSTEM.yamlの汎用tips"
+      
+      project_specific:
+        criteria:
+          - "このプロジェクト特有の問題"
+          - "このプロジェクトの仕様に依存する"
+        destination: "WORKFLOW.yamlのsession_log内cautions"
+    
+    update_flow:
+      description: "バグ修正完了時のtips更新フロー"
+      steps:
+        - step: 1
+          action: "問題と解決策を整理"
+        - step: 2
+          action: "汎用か固有かを判断"
+          question: "この知見は他のプロジェクトでも使える？"
+        - step: 3
+          action: "追加先を決定"
+          if_universal: "tips/TIPS_XXX.md に追加（環境依存の場合）または SYSTEM.yaml汎用tips に追加（環境非依存の場合）"
+          if_specific: "WORKFLOW.yaml の session_log.cautions に追加"
+        - step: 4
+          action: "ユーザーに確認"
+          template: |
+            💡 この知見、他でも使えそう！
+            
+            【問題】{issue}
+            【解決】{solution}
+            
+            tips/{file} に追加していい？✨
+    
+    format:
+      description: "tipsの記述形式"
+      template: |
+        - symptom: "症状・現象"
+          cause: "原因"
+          solution: "解決方法"
+          example: |
+            // コード例（あれば）
+
+  # =====================================
+  # 6. プロンプト更新ルール
+  # =====================================
+  prompt_update_rules:
+    
+    allowed:
+      - action: "追記"
+        description: "新規項目の追加"
+        example: "session_logに新しいエントリを追加"
+      
+      - action: "編集"
+        description: "既存項目の値の修正"
+        example: "featuresのstatusをin_progressからdoneに変更"
+    
+    prohibited:
+      - action: "削除"
+        description: "既存項目を消すこと"
+        reason: "過去の記録が失われる"
+      
+      - action: "置き換え"
+        description: "既存構造を壊して書き直すこと"
+        reason: "プロンプトが壊れる"
+      
+      - action: "構造変更"
+        description: "yamlのキー名や階層を変えること"
+        reason: "AIが読み取れなくなる"
+    
+    self_check:
+      description: "セッション終了時に必ずセルフチェック"
+      checklist:
+        - "既存項目を削除していないか"
+        - "既存構造を置き換えていないか"
+        - "yamlのキー名・階層を変更していないか"
+        - "追記・編集のみで完結しているか"
+      
+      on_problem:
+        action: "問題があった場合のみユーザーに報告"
+        template: |
+          ⚠️ ちょっと確認！
+          {problem_description}
+          このまま進めていい？
+
+  # =====================================
+  # 7. セーブ出力形式
+  # =====================================
+  save_output:
+    
+    timing: "セッション終了時"
+    
+    process:
+      - step: 1
+        action: "更新が必要なファイルを特定"
+      - step: 2
+        action: "セルフチェック実行"
+      - step: 3
+        action: "更新後のファイルを出力"
+      - step: 4
+        action: "ユーザーに保存を依頼"
+    
+    output_template: |
+      💾 セーブするね！
+      ━━━━━━━━━━━━━━━━━━━━
+      📝 今日やったこと:
+      {summary}
+      
+      ✅ 更新するファイル:
+      {updated_files}
+      
+      📋 次回やること:
+      {next_tasks}
+      ━━━━━━━━━━━━━━━━━━━━
+      
+      以下のファイルを保存してね📁
+      
+      ---
+      
+      {file_contents}
+    
+    user_action:
+      description: "ユーザーがやること"
+      steps:
+        - "出力されたファイル内容をコピー"
+        - "該当ファイルに貼り付けて保存"
+        - "完了"
+
+          # =====================================
+  # 8. tips作成ルール
+  # =====================================
+  tips_creation:
+    
+    # ----- 作成タイミング -----
+    creation_timing:
+      description: "新しいtipsファイルを作成するタイミング"
+      triggers:
+        - trigger: "新しい環境・技術を使い始めたとき"
+          example: "Supabase, GAS, Firebase, Vite, Vercel等"
+        - trigger: "その環境でハマりポイントが発生したとき"
+          action: "ファイルがなければ作成してからtipsを追加"
+        - trigger: "プロジェクト開始時に使用技術が確定したとき"
+          action: "使用する環境のtipsファイルを事前に作成（空でもOK）"
+    
+    # ----- ファイル命名規則 -----
+    naming:
+      format: "TIPS_{環境名}.md"
+      examples:
+        - "TIPS_SUPABASE.md"
+        - "TIPS_GAS.md"
+        - "TIPS_FIREBASE.md"
+        - "TIPS_VITE.md"
+        - "TIPS_VERCEL.md"
+        - "TIPS_TAILWIND.md"
+        - "TIPS_REACT.md"
+      rules:
+        - "環境名は大文字"
+        - "スペースはアンダースコアに置換"
+        - "略称があれば略称を使用（Google Apps Script → GAS）"
+    
+    # ----- 冒頭コメントテンプレート -----
+    header_template: |
+      <!-- 
+      =====================================
+      💡 TIPS_{環境名}.md
+      =====================================
+      
+      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      ⚠️ このコメント部分は編集禁止 ⚠️
+      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      
+      【このファイルの役割】
+      {環境名}開発でのtips・ノウハウを蓄積
+      よくあるハマりポイントと解決策を記録
+      
+      【固定/カスタマイズ】
+      追加のみ（削除・編集は基本しない）
+      
+      【更新タイミング】
+      開発で知見を得たとき（追加のみ）
+      - バグ修正で「これ他でも使える」と判断したとき
+      - 新しいハマりポイントを発見したとき
+      - ベストプラクティスを見つけたとき
+      
+      【書くこと】
+      - {環境名}固有のtips
+      - よくあるハマりポイントと解決策
+      - コード例
+      - ベストプラクティス
+      
+      【書かないこと】
+      - プロジェクト固有の注意点 → WORKFLOW.yamlのsession_log.cautions
+      - 他の環境のtips → tips/TIPS_XXX.md（該当ファイル）
+      - 環境に依存しない汎用tips → SYSTEM.yamlのuniversal_tips
+      
+      【重要】
+      ⚠️ 追加のみ可能（削除・編集は基本しない）
+      ⚠️ 過去のtipsは資産として残す
+      
+      【セルフチェック（ファイル編集時に必ず確認）】
+      □ このコメント部分を変更していないか
+      □ 追加のみ行ったか（既存の内容を削除・編集していないか）
+      □ {環境名}固有の内容か（汎用tipsはSYSTEM.yamlへ）
+      □ プロジェクト固有ではないか（固有ならWORKFLOW.yamlへ）
+      □ 追加履歴を更新したか
+      
+      =====================================
+      -->
+    
+    # ----- ファイル内容テンプレート -----
+    content_template: |
+      # {環境名} Tips
+      
+      ## 📋 目次
+      
+      1. [カテゴリ1](#1-カテゴリ1)
+      2. [カテゴリ2](#2-カテゴリ2)
+      
+      ---
+      
+      ## 1. カテゴリ1
+      
+      ### {症状・問題の名前}
+      
+      | 項目 | 内容 |
+      |-----|------|
+      | **症状** | {何が起きるか} |
+      | **原因** | {なぜ起きるか} |
+      | **解決** | {どう解決するか} |
+      
+      ```{言語}
+      // コード例
+      ```
+      
+      ---
+      
+      ## 📝 追加履歴
+      
+      | 日付 | 追加内容 |
+      |------|---------|
+      | {yyyy-mm-dd} | 初期作成 |
+    
+    # ----- tips追加時のフォーマット -----
+    entry_format:
+      description: "tipsを追加するときの記述形式"
+      template: |
+        ### {症状・問題の名前}
+        
+        | 項目 | 内容 |
+        |-----|------|
+        | **症状** | {何が起きるか・どういう状況か} |
+        | **原因** | {なぜ起きるか・根本原因} |
+        | **解決** | {どう解決するか・具体的な手順} |
+        
+        ```{言語}
+        // ❌ NG: 問題のあるコード
+        {bad_code}
+        
+        // ✅ OK: 解決後のコード
+        {good_code}
+        ```
+      
+      required_fields:
+        - "症状: 何が起きるかを具体的に"
+        - "原因: なぜ起きるかを明確に"
+        - "解決: どう解決するかを手順で"
+      
+      optional_fields:
+        - "コード例: 問題と解決の両方を示す"
+        - "補足: 追加情報があれば"
+    
+    # ----- 作成フロー -----
+    creation_flow:
+      description: "新しいtipsファイルを作成するフロー"
+      steps:
+        - step: 1
+          action: "ファイル名を決定"
+          format: "TIPS_{環境名}.md"
+        - step: 2
+          action: "冒頭コメントをコピー"
+          source: "header_templateを使用、{環境名}を置換"
+        - step: 3
+          action: "本文テンプレートをコピー"
+          source: "content_templateを使用、{環境名}を置換"
+        - step: 4
+          action: "目次のカテゴリを設定"
+          note: "その環境でよくある問題のカテゴリを設定"
+        - step: 5
+          action: "tips/フォルダに保存"
+        - step: 6
+          action: "FILE_STRUCTURE.mdを更新"
+          note: "新しいファイルを追加"
+    
+    # ----- カテゴリ例（環境別） -----
+    category_examples:
+      SUPABASE:
+        - "認証（Auth）"
+        - "RLS（Row Level Security）"
+        - "クエリ・CRUD"
+        - "リアルタイム"
+        - "ストレージ"
+        - "Functions / Triggers"
+        - "接続・初期化"
+      
+      GAS:
+        - "スプレッドシート操作"
+        - "トリガー"
+        - "外部API連携"
+        - "認証・権限"
+        - "デプロイ"
+        - "デバッグ"
+      
+      FIREBASE:
+        - "認証（Auth）"
+        - "Firestore"
+        - "Realtime Database"
+        - "ストレージ"
+        - "Cloud Functions"
+        - "ホスティング"
+      
+      VITE:
+        - "設定（vite.config.js）"
+        - "環境変数"
+        - "ビルド"
+        - "開発サーバー"
+        - "プラグイン"
+      
+      VERCEL:
+        - "デプロイ"
+        - "環境変数"
+        - "ドメイン設定"
+        - "ビルド設定"
+        - "サーバーレス関数"
+      
+      TAILWIND:
+        - "クラスが効かない"
+        - "カスタマイズ"
+        - "レスポンシブ"
+        - "ダークモード"
