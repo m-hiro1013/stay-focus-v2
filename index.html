@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>stay-focus 🔥</title>
+  <style>
+    /* =========================================
+       基本設定・CSS変数定義
+       ========================================= */
+    :root {
+      --color-primary: #ff69b4;
+      --color-primary-light: #ffb6c1;
+      --color-secondary: #667eea;
+      --color-bg-main: #f0f2f5;
+      --color-bg-white: #ffffff;
+      --color-text-main: #2d3436;
+      --color-text-secondary: #666666;
+      --color-text-tertiary: #999999;
+      --color-border: #e0e0e0;
+      --color-border-light: #f0f0f0;
+      --color-danger: #ff4d4d;
+      --color-warning: #ffc107;
+      --color-success: #51cf66;
+
+      --font-size-h1: 32px;
+      --font-size-h2: 24px;
+      --font-size-base: 16px;
+      --font-size-small: 14px;
+      --font-size-xsmall: 12px;
+      --font-size-task-name: 16px;
+      --font-size-task-memo: 13px;
+      --font-size-task-meta: 12px;
+
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --spacing-xxl: 30px;
+
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-round: 20px;
+
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+      line-height: 1.6;
+      color: var(--color-text-main);
+      background-color: var(--color-bg-main);
+    }
+
+    /* =========================================
+       レイアウト
+       ========================================= */
+    .app-container {
+      min-height: 100vh;
+      background-color: var(--color-bg-main);
+      display: flex;
+      justify-content: center;
+      padding: var(--spacing-xl);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-xxl);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .main-content {
+      background-color: var(--color-bg-white);
+      padding: var(--spacing-xxl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* =========================================
+       コンポーネント
+       ========================================= */
+    .app-title {
+      color: var(--color-primary);
+      margin: 0;
+      font-size: var(--font-size-h1);
+    }
+
+    .app-subtitle {
+      margin-top: 0;
+      margin-bottom: var(--spacing-xl);
+      font-size: var(--font-size-h2);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: bold;
+      font-size: var(--font-size-small);
+      white-space: nowrap;
+      transition: var(--transition-fast);
+      background-color: var(--color-bg-white);
+      color: var(--color-text-main);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #ff1493;
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: white;
+      border: none;
+    }
+
+    .btn-success {
+      background-color: var(--color-success);
+      color: white;
+      border: none;
+    }
+
+    .btn-warning {
+      background-color: #FF9800;
+      color: white;
+      border: none;
+    }
+
+    .btn-outline-danger {
+      background-color: white;
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger);
+    }
+
+    /* =========================================
+       プロジェクトタブ
+       ========================================= */
+    .project-tabs-container {
+      margin-bottom: var(--spacing-xl);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project-tabs {
+      display: flex;
+      gap: var(--spacing-sm);
+      min-width: max-content;
+      padding-bottom: var(--spacing-sm);
+    }
+
+    .project-tab {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: var(--font-size-small);
+      white-space: nowrap;
+      transition: var(--transition-fast);
+      background-color: var(--color-border-light);
+      color: var(--color-text-secondary);
+      border-bottom: 3px solid transparent;
+    }
+
+    .project-tab:hover {
+      background-color: #e8e8e8;
+    }
+
+    .project-tab.active {
+      background-color: var(--color-bg-white);
+      color: var(--color-text-main);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .project-tab-add {
+      background-color: transparent;
+      color: var(--color-primary);
+      border: 1px dashed var(--color-primary);
+      border-bottom: none;
+    }
+
+    .project-tab-add:hover {
+      background-color: #fff0f5;
+    }
+
+    /* =========================================
+       プロジェクト説明
+       ========================================= */
+    .project-description {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-xl);
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+    }
+
+    /* =========================================
+       タスク作成フォーム
+       ========================================= */
+    .task-create-form {
+      margin-bottom: 30px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .task-input {
+      flex: 1;
+    }
+
+    .input-text,
+    .input-textarea,
+    .input-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      box-sizing: border-box;
+    }
+
+    .input-textarea {
+      resize: vertical;
+    }
+
+    /* =========================================
+       時間枠セクション
+       ========================================= */
+    .timeframe-section {
+      margin-bottom: 30px;
+    }
+
+    .timeframe-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background-color: #f8f9fa;
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      color: var(--color-text-main);
+    }
+
+    .timeframe-label {
+      color: var(--color-primary);
+    }
+
+    .timeframe-count {
+      background-color: #ffe6f2;
+      color: var(--color-primary);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .timeframe-tasks {
+      background-color: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--color-border-light);
+      min-height: 60px;
+    }
+
+    /* =========================================
+       タスクカード
+       ========================================= */
+    .task-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 10px;
+      border-bottom: 1px solid var(--color-border-light);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .task-card:hover {
+      background-color: #f9f9f9;
+    }
+
+    .task-card:active {
+      background-color: #f0f0f0;
+    }
+
+    .task-card:last-child {
+      border-bottom: none;
+    }
+
+    .task-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-name {
+      font-weight: bold;
+      font-size: var(--font-size-task-name);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      word-break: break-word;
+    }
+
+    .task-memo {
+      font-size: var(--font-size-task-memo);
+      color: var(--color-text-secondary);
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .task-meta {
+      font-size: var(--font-size-task-meta);
+      color: var(--color-text-tertiary);
+    }
+
+    .task-assignees {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .task-assignee {
+      font-size: 11px;
+      padding: 2px 8px;
+      background-color: var(--color-border-light);
+      border-radius: 10px;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .assignee-color {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* =========================================
+       アイコン
+       ========================================= */
+    .icon-drag {
+      cursor: grab;
+      font-size: 18px;
+      color: var(--color-text-tertiary);
+      touch-action: none;
+      flex-shrink: 0;
+    }
+
+    .icon-drag:active {
+      cursor: grabbing;
+    }
+
+    .icon-pin {
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .icon-pin.active {
+      opacity: 1;
+    }
+
+    .icon-pin.inactive {
+      opacity: 0.3;
+      filter: grayscale(100%);
+    }
+
+    .icon-star {
+      font-size: 18px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .icon-star.active {
+      color: #FFD700;
+    }
+
+    .icon-star.inactive {
+      color: var(--color-border);
+    }
+
+    .icon-delete {
+      background-color: var(--color-danger);
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: var(--font-size-small);
+      font-weight: 500;
+      flex-shrink: 0;
+      transition: var(--transition-fast);
+    }
+
+    .icon-delete:hover {
+      background-color: #e63939;
+      transform: translateY(-1px);
+    }
+
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* =========================================
+       警告状態
+       ========================================= */
+    .task-warning {
+      background-color: #fff5f5 !important;
+      border: 1px solid #ffcccc;
+    }
+
+    /* ピン留め＋期日切れ：ピン留めの枠線を優先 */
+    .task-card.task-warning.task-pinned {
+      border: 2px solid #ff4d4d;
+    }
+
+    .task-warning-icon {
+      font-size: 16px;
+      animation: pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+      }
+    }
+
+    .task-meta-warning {
+      color: #d9534f !important;
+      font-weight: bold;
+    }
+
+    /* =========================================
+       ピン留め・重要マーク スタイル
+       ========================================= */
+    .task-card.task-pinned {
+      border: 2px solid #ff4d4d;
+    }
+
+    .task-card.task-pinned .task-name {
+      font-weight: bold;
+    }
+
+    .task-card.task-important {
+      background-color: #fffde7;
+    }
+
+    /* 期日切れで重要の背景色を上書き */
+    .task-card.task-warning.task-important {
+      background-color: #fff5f5;
+    }
+
+    /* プロジェクトカラー丸 */
+    .task-project-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* =========================================
+       空状態
+       ========================================= */
+    .task-empty-message {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      padding: 40px;
+      font-size: 14px;
+    }
+
+    .task-dropzone-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--color-text-tertiary);
+      font-size: 14px;
+      background-color: #fafafa;
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+    }
+
+    /* =========================================
+       ローディング
+       ========================================= */
+    .loading-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-size: 20px;
+      color: var(--color-primary);
+    }
+
+    .task-loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--color-text-tertiary);
+    }
+
+    /* =========================================
+       Undo通知
+       ========================================= */
+    .undo-notification {
+      padding: 10px;
+      background-color: #fff3cd;
+      border: 1px solid var(--color-warning);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #856404;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .undo-count {
+      background-color: var(--color-warning);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    /* =========================================
+       モーダル
+       ========================================= */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: var(--radius-xl);
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-title {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-row>* {
+      flex: 1;
+    }
+
+    .btn-clear-date {
+      margin-top: 10px;
+      width: 100%;
+      background-color: var(--color-border-light);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+    }
+
+    .form-checkbox-group {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .form-checkbox {
+      width: 20px;
+      height: 20px;
+    }
+
+    .form-checkbox-icon {
+      font-size: 20px;
+    }
+
+    .assignee-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .assignee-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 12px;
+      background-color: var(--color-border-light);
+      color: var(--color-text-main);
+      border-radius: var(--radius-round);
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition-fast);
+    }
+
+    .assignee-option.selected {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .assignee-option:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .no-members-message {
+      color: var(--color-text-tertiary);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .modal-actions-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-actions-row .btn {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    /* =========================================
+       カラーピッカー
+       ========================================= */
+    .color-picker {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .color-option {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-fast);
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .color-option.selected {
+      border-color: #333;
+    }
+
+    /* =========================================
+       非表示
+       ========================================= */
+    .hidden {
+      display: none !important;
+    }
+
+    /* =========================================
+   ドラッグ&ドロップ
+   ========================================= */
+    .task-card.dragging {
+      opacity: 0.5;
+      background-color: #f0f0f0;
+    }
+
+    .task-card.drag-over {
+      border-top: 3px solid var(--color-primary);
+    }
+
+    .timeframe-tasks.drag-over {
+      background-color: #fff0f5;
+      border: 2px dashed var(--color-primary);
+    }
+
+    .drag-overlay {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1001;
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border-left: 5px solid var(--color-primary);
+      font-weight: bold;
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* =========================================
+   メンバー管理モーダル
+   ========================================= */
+    .member-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background-color: var(--color-border-light);
+      border-radius: var(--radius-md);
+    }
+
+    .member-color-display {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-name {
+      font-weight: bold;
+      font-size: var(--font-size-base);
+    }
+
+    .member-email {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+    }
+
+    .member-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      padding: 6px 10px;
+      font-size: var(--font-size-small);
+      border-radius: var(--radius-sm);
+    }
+
+    .member-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+    }
+
+    .member-form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .member-form-row>* {
+      flex: 1;
+    }
+
+    .no-members {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      padding: 20px;
+    }
+
+    /* =========================================
+   レポート画面
+   ========================================= */
+    .report-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .report-filters label {
+      font-weight: bold;
+      font-size: var(--font-size-small);
+    }
+
+    .report-summary {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .report-stat {
+      background-color: var(--color-border-light);
+      padding: 15px 20px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .report-stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .report-stat-label {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+    }
+
+    .report-task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .report-task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 15px;
+      background-color: var(--color-border-light);
+      border-radius: var(--radius-md);
+    }
+
+    .report-task-content {
+      flex: 1;
+    }
+
+    .report-task-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .report-task-meta {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .report-task-result {
+      font-size: var(--font-size-small);
+      color: var(--color-text-main);
+      background-color: white;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+    }
+
+    .report-task-result-input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-small);
+      margin-top: 8px;
+    }
+
+    .report-empty {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      padding: 40px;
+    }
+
+    /* =========================================
+   アーカイブモーダル
+   ========================================= */
+    .archive-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .archive-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background-color: var(--color-border-light);
+      border-radius: var(--radius-md);
+    }
+
+    .archive-item-info {
+      flex: 1;
+    }
+
+    .archive-item-name {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .archive-item-meta {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+    }
+
+    .archive-empty {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      padding: 40px;
+    }
+
+    /* =========================================
+   PWA対応
+   ========================================= */
+    .pwa-indicator {
+      font-size: var(--font-size-xsmall);
+      color: var(--color-primary);
+      margin-left: 10px;
+    }
+
+    .offline-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--color-warning);
+      color: white;
+      text-align: center;
+      padding: 8px;
+      font-size: var(--font-size-small);
+      font-weight: bold;
+      z-index: 2000;
+    }
+
+    /* PWAモード時のスワイプ */
+    .pwa-mode .task-checkbox,
+    .pwa-mode .icon-delete {
+      display: none;
+    }
+
+    .swipe-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .swipe-card {
+      position: relative;
+      transition: transform 0.3s ease;
+      background-color: white;
+      z-index: 1;
+    }
+
+    .swipe-card.swiped-right {
+      transform: translateX(80px);
+    }
+
+    .swipe-card.swiped-left {
+      transform: translateX(-80px);
+    }
+
+    .swipe-actions {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+    }
+
+    .swipe-action-complete {
+      left: 0;
+      background-color: var(--color-success);
+      color: white;
+    }
+
+    .swipe-action-delete {
+      right: 0;
+      background-color: var(--color-danger);
+      color: white;
+    }
+
+    .swipe-action-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--font-size-small);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .swipe-action-icon {
+      font-size: 20px;
+    }
+
+    .swipe-out {
+      animation: swipeOut 0.3s ease forwards;
+    }
+
+    @keyframes swipeOut {
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    /* =========================================
+       レポート画面（更新版）
+       ========================================= */
+    .modal-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-header-row .modal-title {
+      margin: 0;
+    }
+
+    .report-filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .report-summary {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .report-stat {
+      background-color: var(--color-border-light);
+      padding: 15px 20px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .report-stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--color-primary);
+    }
+
+    .report-stat-label {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+    }
+
+    .report-list {
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .report-date-group {
+      margin-bottom: 20px;
+    }
+
+    .report-date-header {
+      padding: 10px 15px;
+      background-color: #f8f9fa;
+      border-radius: var(--radius-md);
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: var(--color-text-secondary);
+    }
+
+    .report-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 15px;
+      background-color: white;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+    }
+
+    .report-item-project {
+      background-color: #f0f8ff;
+      border-color: #add8e6;
+    }
+
+    .report-item-task {
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .report-item-task:hover {
+      background-color: #f9f9f9;
+    }
+
+    .report-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .report-item-badge {
+      display: inline-block;
+      background-color: var(--color-success);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .report-item-name {
+      font-weight: bold;
+      font-size: var(--font-size-base);
+      margin-bottom: 5px;
+      word-break: break-word;
+    }
+
+    .report-item-meta {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .report-item-memo {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+      margin-bottom: 5px;
+      word-break: break-word;
+    }
+
+    .report-item-desc {
+      font-size: var(--font-size-small);
+      color: var(--color-text-secondary);
+      word-break: break-word;
+    }
+
+    .report-item-result {
+      margin-top: 8px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-left: 4px solid var(--color-primary);
+      border-radius: 4px;
+      font-size: var(--font-size-small);
+      word-break: break-word;
+    }
+
+    .report-item-result-empty {
+      margin-top: 8px;
+      font-size: var(--font-size-xsmall);
+      color: var(--color-text-tertiary);
+    }
+
+    .report-empty {
+      text-align: center;
+      color: var(--color-text-tertiary);
+      padding: 40px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: var(--font-size-small);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <!-- ローディング（初期表示） -->
+    <div id="loading-screen" class="loading-screen">
+      読み込み中...⏳
+    </div>
+  </div>
+
+  <!-- メインコンテンツ（テンプレート） -->
+  <template id="main-template">
+    <div class="app-container">
+      <div class="app-wrapper">
+        <!-- ヘッダー -->
+        <header class="app-header">
+          <h1 class="app-title">stay-focus 🔥</h1>
+          <div class="header-buttons">
+            <button class="btn hidden" id="project-settings-btn">⚙️ プロジェクト設定</button>
+            <button class="btn" id="archive-btn">📦 アーカイブ</button>
+            <button class="btn" id="report-btn">📊 レポート</button>
+            <button class="btn" id="member-btn">👥 メンバー管理</button>
+            <button class="btn" id="logout-btn">ログアウト</button>
+          </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+          <!-- プロジェクトタブ -->
+          <div class="project-tabs-container">
+            <div class="project-tabs" id="project-tabs">
+              <!-- JSで動的に生成 -->
+            </div>
+          </div>
+
+          <!-- プロジェクト説明 -->
+          <div id="project-description" class="project-description hidden"></div>
+
+          <!-- サブタイトル -->
+          <h2 class="app-subtitle" id="app-subtitle">すべてのタスク 📝</h2>
+
+          <!-- タスク作成フォーム -->
+          <form id="task-create-form" class="task-create-form">
+            <input type="text" id="new-task-input" class="input-text task-input" placeholder="新しいタスクを入力してね！">
+            <button type="submit" class="btn btn-primary">追加 ➕</button>
+          </form>
+
+          <!-- Undo通知 -->
+          <div id="undo-notification" class="undo-notification hidden">
+            <span>💡 間違えた？ <strong>Command + Z</strong>（Ctrl + Z）で完了・削除を戻せるよ！</span>
+
+            <span id="undo-count" class="undo-count">0</span>
+          </div>
+
+          <!-- タスク一覧 -->
+          <div id="task-list"></div>
+        </main>
+      </div>
+    </div>
+  </template>
+
+  <!-- タスク作成モーダル -->
+  <div id="create-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">新しいタスク 📝</h2>
+
+      <!-- タスク名 -->
+      <div class="form-group">
+        <label class="form-label">タスク名</label>
+        <input type="text" id="modal-task-name" class="input-text">
+      </div>
+
+      <!-- メモ -->
+      <div class="form-group">
+        <label class="form-label">メモ</label>
+        <textarea id="modal-memo" class="input-textarea" rows="3" placeholder="詳細なメモを入力..."></textarea>
+      </div>
+
+      <!-- 優先度（時間枠） -->
+      <div class="form-group">
+        <label class="form-label">優先度（時間枠）</label>
+        <select id="modal-time-frame" class="input-select">
+          <option value="今日">今日</option>
+          <option value="明日">明日</option>
+          <option value="今週">今週</option>
+          <option value="来週">来週</option>
+          <option value="来月以降">来月以降</option>
+        </select>
+      </div>
+
+      <!-- 期日 -->
+      <div class="form-group">
+        <label class="form-label">期日</label>
+        <div class="form-row">
+          <input type="date" id="modal-due-date" class="input-text">
+          <select id="modal-due-time" class="input-select">
+            <option value="">時間なし</option>
+          </select>
+        </div>
+        <button type="button" id="modal-clear-date" class="btn btn-clear-date hidden">🗑️ 期日をクリア</button>
+      </div>
+
+      <!-- 重要マーク・ピン留め -->
+      <div class="form-group form-checkbox-group">
+        <label class="form-checkbox-label">
+          <input type="checkbox" id="modal-important" class="form-checkbox">
+          <span id="modal-important-icon" class="form-checkbox-icon">☆</span>
+          重要マーク
+        </label>
+        <label class="form-checkbox-label">
+          <input type="checkbox" id="modal-pinned" class="form-checkbox">
+          📌 ピン留め
+        </label>
+      </div>
+
+      <!-- 担当者 -->
+      <div class="form-group">
+        <label class="form-label">担当者</label>
+        <div id="modal-assignees" class="assignee-selection">
+          <p class="no-members-message">メンバーがいません</p>
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="modal-actions">
+        <button type="button" id="modal-cancel" class="btn">キャンセル</button>
+        <button type="button" id="modal-create" class="btn btn-primary">作成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- タスク編集モーダル -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">タスク詳細 📝</h2>
+
+      <!-- タスク名 -->
+      <div class="form-group">
+        <label class="form-label">タスク名</label>
+        <input type="text" id="edit-task-name" class="input-text">
+      </div>
+
+      <!-- メモ -->
+      <div class="form-group">
+        <label class="form-label">メモ</label>
+        <textarea id="edit-memo" class="input-textarea" rows="3" placeholder="詳細なメモを入力..."></textarea>
+      </div>
+
+      <!-- プロジェクト -->
+      <div class="form-group">
+        <label class="form-label">プロジェクト</label>
+        <select id="edit-project" class="input-select">
+          <option value="">プロジェクトなし</option>
+        </select>
+      </div>
+
+      <!-- 優先度（時間枠） -->
+      <div class="form-group">
+        <label class="form-label">優先度（時間枠）</label>
+        <select id="edit-time-frame" class="input-select">
+          <option value="今日">今日</option>
+          <option value="明日">明日</option>
+          <option value="今週">今週</option>
+          <option value="来週">来週</option>
+          <option value="来月以降">来月以降</option>
+        </select>
+      </div>
+
+      <!-- 期日 -->
+      <div class="form-group">
+        <label class="form-label">期日</label>
+        <div class="form-row">
+          <input type="date" id="edit-due-date" class="input-text">
+          <select id="edit-due-time" class="input-select">
+            <option value="">時間なし</option>
+          </select>
+        </div>
+        <button type="button" id="edit-clear-date" class="btn btn-clear-date hidden">🗑️ 期日をクリア</button>
+      </div>
+
+      <!-- 重要マーク・ピン留め -->
+      <div class="form-group form-checkbox-group">
+        <label class="form-checkbox-label">
+          <input type="checkbox" id="edit-important" class="form-checkbox">
+          <span id="edit-important-icon" class="form-checkbox-icon">☆</span>
+          重要マーク
+        </label>
+        <label class="form-checkbox-label">
+          <input type="checkbox" id="edit-pinned" class="form-checkbox">
+          📌 ピン留め
+        </label>
+      </div>
+
+      <!-- 担当者 -->
+      <div class="form-group">
+        <label class="form-label">担当者</label>
+        <div id="edit-assignees" class="assignee-selection">
+          <p class="no-members-message">メンバーがいません</p>
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="modal-actions">
+        <button type="button" id="edit-cancel" class="btn">キャンセル</button>
+        <button type="button" id="edit-save" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- プロジェクト作成モーダル -->
+  <div id="project-create-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">新しいプロジェクト 🚀</h2>
+
+      <!-- プロジェクト名 -->
+      <div class="form-group">
+        <label class="form-label">プロジェクト名</label>
+        <input type="text" id="project-create-name" class="input-text" placeholder="例：Webサイトリニューアル">
+      </div>
+
+      <!-- 概要 -->
+      <div class="form-group">
+        <label class="form-label">概要（任意）</label>
+        <textarea id="project-create-desc" class="input-textarea" rows="3" placeholder="プロジェクトの説明..."></textarea>
+      </div>
+
+      <!-- 色 -->
+      <div class="form-group">
+        <label class="form-label">色</label>
+        <div id="project-create-colors" class="color-picker">
+          <!-- JSで動的に生成 -->
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="modal-actions">
+        <button type="button" id="project-create-cancel" class="btn">キャンセル</button>
+        <button type="button" id="project-create-submit" class="btn btn-primary">作成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- プロジェクト設定モーダル -->
+  <div id="project-settings-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">プロジェクト設定 ⚙️</h2>
+
+      <!-- プロジェクト名 -->
+      <div class="form-group">
+        <label class="form-label">プロジェクト名</label>
+        <input type="text" id="project-settings-name" class="input-text">
+      </div>
+
+      <!-- 概要 -->
+      <div class="form-group">
+        <label class="form-label">概要</label>
+        <textarea id="project-settings-desc" class="input-textarea" rows="3" placeholder="プロジェクトの説明..."></textarea>
+      </div>
+
+      <!-- 色 -->
+      <div class="form-group">
+        <label class="form-label">色</label>
+        <div id="project-settings-colors" class="color-picker">
+          <!-- JSで動的に生成 -->
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="modal-actions-vertical">
+        <!-- プロジェクト完了ボタン（条件付きで表示） -->
+        <button type="button" id="project-complete-btn" class="btn btn-success hidden">✅ プロジェクト完了</button>
+
+        <div class="modal-actions-row">
+          <button type="button" id="project-delete-btn" class="btn btn-outline-danger">削除</button>
+          <button type="button" id="project-archive-btn" class="btn btn-warning">📦 アーカイブ</button>
+        </div>
+
+        <div class="modal-actions-row">
+          <button type="button" id="project-settings-cancel" class="btn">キャンセル</button>
+          <button type="button" id="project-settings-save" class="btn btn-primary">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- メンバー管理モーダル -->
+  <div id="member-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">メンバー管理 👥</h2>
+
+      <!-- メンバー追加フォーム -->
+      <div class="member-form">
+        <div class="member-form-row">
+          <input type="text" id="member-name-input" class="input-text" placeholder="名前">
+          <input type="email" id="member-email-input" class="input-text" placeholder="メールアドレス">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">色</label>
+          <div id="member-color-picker" class="color-picker"></div>
+        </div>
+        <button type="button" id="member-add-btn" class="btn btn-primary">追加</button>
+      </div>
+
+      <!-- メンバー一覧 -->
+      <div id="member-list" class="member-list">
+        <!-- JSで動的に生成 -->
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="member-modal-close" class="btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- メンバー編集モーダル -->
+  <div id="member-edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">メンバー編集 ✏️</h2>
+
+      <div class="form-group">
+        <label class="form-label">名前</label>
+        <input type="text" id="member-edit-name" class="input-text">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">メールアドレス</label>
+        <input type="email" id="member-edit-email" class="input-text">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">色</label>
+        <div id="member-edit-color-picker" class="color-picker"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="member-edit-cancel" class="btn">キャンセル</button>
+        <button type="button" id="member-edit-save" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- レポートモーダル -->
+  <div id="report-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header-row">
+        <h2 class="modal-title">振り返りレポート 📊</h2>
+        <button type="button" id="report-modal-close" class="btn">閉じる</button>
+      </div>
+
+      <!-- フィルター -->
+      <div class="report-filters">
+        <input type="date" id="report-start-date" class="input-text" style="width: auto;">
+        <span>〜</span>
+        <input type="date" id="report-end-date" class="input-text" style="width: auto;">
+        <button type="button" id="report-filter-btn" class="btn btn-primary">表示</button>
+      </div>
+
+      <!-- サマリー -->
+      <div id="report-summary" class="report-summary"></div>
+
+      <!-- 完了タスク・プロジェクト一覧 -->
+      <div id="report-task-list" class="report-list"></div>
+    </div>
+  </div>
+
+  <!-- 振り返り編集モーダル -->
+  <div id="report-edit-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 500px;">
+      <h2 class="modal-title">振り返り & 編集 📝</h2>
+
+      <!-- タスク名 -->
+      <div class="form-group">
+        <label class="form-label">タスク名</label>
+        <input type="text" id="report-edit-task-name" class="input-text">
+      </div>
+
+      <!-- メモ -->
+      <div class="form-group">
+        <label class="form-label">メモ</label>
+        <textarea id="report-edit-memo" class="input-textarea" rows="2"></textarea>
+      </div>
+
+      <!-- 結果・気づき -->
+      <div class="form-group">
+        <label class="form-label">結果・気づき</label>
+        <textarea id="report-edit-result" class="input-textarea" rows="4" placeholder="ここに結果や気づきを書いてね！"></textarea>
+      </div>
+
+      <!-- ボタン -->
+      <div class="modal-actions">
+        <button type="button" id="report-edit-cancel" class="btn">閉じる</button>
+        <button type="button" id="report-edit-save" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- アーカイブモーダル -->
+  <div id="archive-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">アーカイブ 📦</h2>
+
+      <div id="archive-list" class="archive-list">
+        <!-- JSで動的に生成 -->
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="archive-modal-close" class="btn">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- オフラインインジケーター -->
+  <div id="offline-indicator" class="offline-indicator hidden">
+    📡 オフライン
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
